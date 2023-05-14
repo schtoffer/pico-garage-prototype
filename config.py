@@ -1,0 +1,4 @@
+WIFI_SSID = "Your Network Name"
+WIFI_PASSWORD = "PASSWORD"
+BLINK_IP = False
+BLINK_LAST_ONLY = False
