@@ -1,4 +1,4 @@
-WIFI_SSID = "Voldemort"
+WIFI_SSID = "Voldemort-v02"
 WIFI_PASSWORD = "PASSWORD"
 BLINK_IP = False
 BLINK_LAST_ONLY = False
