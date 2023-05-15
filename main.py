@@ -13,7 +13,7 @@ from machine import Pin
 import ujson as json
 
 led = Pin("LED", Pin.OUT)
-led.off()
+led.on()
 
 blink_off_time = 0.5
 blink_on_time = 0.5
@@ -22,7 +22,6 @@ status = True
 shutdown = False
 
 garage_btn = Pin(16, Pin.OUT)
-
 garage_door_closed = True
 
 magnet = Pin(17, mode=Pin.IN, pull=Pin.PULL_DOWN)
@@ -39,7 +38,7 @@ async def say_hello(request, response, name):
 
 async def send_status(request, response):
     # send boolean status and number frequency
-    response_string = json.dumps({"door-state": magnet.value(), "status": status})
+    response_string = json.dumps({"door-state": magnet.value()})
     await response.send_json(response_string, 200)
 
 async def set_blink_pattern(request, response, on, off):
@@ -95,13 +94,9 @@ async def control_garage_door(request, response, operation):
 
 async def main():
     global shutdown
-    # if config.BLINK_IP:
-    #     await(server.blink_ip(led_pin = led, last_only = config.BLINK_LAST_ONLY))
     while not shutdown:
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.2)
         print(magnet.value())
-        
-    
             
 server = GurgleAppsWebserver(config.WIFI_SSID, config.WIFI_PASSWORD, port=80, timeout=20, doc_root="/www", log_level=2)
 server.add_function_route("/set-delay/<delay>", set_delay)
@@ -115,7 +110,6 @@ server.add_function_route("/status", send_status)
 server.add_function_route("/example/func/<param1>/<param2>", example_func)
 server.add_function_route("/hello/<name>", say_hello)
 server.add_function_route("/stop-server", stop_server)
-server.add_function_route("/garage-door/<operation>", control_garage_door)
 
 asyncio.run(server.start_server_with_background_task(main))
 print('DONE')
