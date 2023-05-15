@@ -95,8 +95,8 @@ async def control_garage_door(request, response, operation):
 
 async def main():
     global shutdown
-    if config.BLINK_IP:
-        await(server.blink_ip(led_pin = led, last_only = config.BLINK_LAST_ONLY))
+    # if config.BLINK_IP:
+    #     await(server.blink_ip(led_pin = led, last_only = config.BLINK_LAST_ONLY))
     while not shutdown:
         await asyncio.sleep(1)
         print(magnet.value())
