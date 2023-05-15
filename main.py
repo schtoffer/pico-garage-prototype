@@ -110,6 +110,7 @@ server.add_function_route("/status", send_status)
 server.add_function_route("/example/func/<param1>/<param2>", example_func)
 server.add_function_route("/hello/<name>", say_hello)
 server.add_function_route("/stop-server", stop_server)
+server.add_function_route("/garage-door/<operation>", control_garage_door)
 
 asyncio.run(server.start_server_with_background_task(main))
 print('DONE')
