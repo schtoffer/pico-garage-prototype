@@ -99,6 +99,9 @@ async def main():
         await(server.blink_ip(led_pin = led, last_only = config.BLINK_LAST_ONLY))
     while not shutdown:
         await asyncio.sleep(1)
+        print(magnet.value())
+        
+    
             
 server = GurgleAppsWebserver(config.WIFI_SSID, config.WIFI_PASSWORD, port=80, timeout=20, doc_root="/www", log_level=2)
 server.add_function_route("/set-delay/<delay>", set_delay)
