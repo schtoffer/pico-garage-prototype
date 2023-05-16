@@ -13,7 +13,15 @@ from machine import Pin
 import ujson as json
 
 led = Pin("LED", Pin.OUT)
+led_wlan_connected = Pin(13, Pin.OUT)
+led_wlan_disconnected = Pin(15, Pin.OUT)
+led_done = Pin(14, Pin.OUT)
+switch_restart = Pin(20, Pin.OUT)
+
 led.off()
+led_wlan_disconnected.off()
+led_wlan_connected.off()
+led_done.off()
 
 blink_off_time = 0.5
 blink_on_time = 0.5
@@ -21,7 +29,7 @@ blink_on_time = 0.5
 status = True
 shutdown = False
 
-garage_btn = Pin(16, Pin.OUT)
+garage_signal = Pin(16, Pin.OUT)
 
 garage_door_closed = True
 
@@ -39,7 +47,7 @@ async def say_hello(request, response, name):
 
 async def send_status(request, response):
     # send boolean status and number frequency
-    response_string = json.dumps({"door-state": magnet.value(), "status": status})
+    response_string = json.dumps({"door-state": magnet.value()})
     await response.send_json(response_string, 200)
 
 async def set_blink_pattern(request, response, on, off):
@@ -79,29 +87,42 @@ async def control_garage_door(request, response, operation):
         if magnet.value() == 1:
             pass
         else:
-            garage_btn.on()
+            garage_signal.on()
             await asyncio.sleep(1)
-            garage_btn.off()
+            garage_signal.off()
             garage_door_closed = True
     elif operation == "open":
         if magnet.value() == 0:
             pass
         else:
-            garage_btn.on()
+            garage_signal.on()
             await asyncio.sleep(1)
-            garage_btn.off()
+            garage_signal.off()
             garage_door_closed = False
     await send_status(request, response)
 
 async def main():
     global shutdown
-    if config.BLINK_IP:
-        await(server.blink_ip(led_pin = led, last_only = config.BLINK_LAST_ONLY))
-    while not shutdown:
-        await asyncio.sleep(1)
-        print(magnet.value())
-        
     
+    while not shutdown:
+        await asyncio.sleep(0.2)
+
+        if magnet.value() == 1:
+            led_wlan_connected.off()
+            led_wlan_disconnected.on()
+            await asyncio.sleep(1)
+            switch_restart.on()
+        
+        if server.wlan.isconnected() == True:
+            led_wlan_connected.on()
+            led_wlan_disconnected.off()
+            #print(server.wlan.isconnected())
+        else:
+            led_wlan_connected.off()
+            led_wlan_disconnected.on()
+            await asyncio.sleep(10)
+            switch_restart.on()
+            #print(server.wlan.isconnected())
             
 server = GurgleAppsWebserver(config.WIFI_SSID, config.WIFI_PASSWORD, port=80, timeout=20, doc_root="/www", log_level=2)
 server.add_function_route("/set-delay/<delay>", set_delay)
