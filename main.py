@@ -122,7 +122,7 @@ async def main():
         distance = sensor.distance_cm()
         print(distance)
         
-        if distance < 5:
+        if distance < 20:
             while True:
                 distance = sensor.distance_cm()
                 red()
@@ -132,17 +132,11 @@ async def main():
                 print(distance)
                 if distance > 5:
                     break
-        elif distance > 0 and distance < 10:
+        elif distance > 0 and distance < 30:
             red()
-            print(distance)
-        elif distance >= 10 and distance < 20:
-            yellow()
-            print(distance)
-        elif distance >= 20 and distance < 30:
+        elif distance >= 30 and distance < 80:
             green()
-            print(distance)
         else:
-            print(distance)
             leds_off()
         await asyncio.sleep(.1)
         
