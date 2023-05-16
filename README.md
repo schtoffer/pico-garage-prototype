@@ -1,12 +1,6 @@
-# Raspberry Pi Pico W Smart Garage
-
-This repository contains code to turn a dumb garage into a smart one.
-
-The code is heavily based on Gurgleapps.com. Please continue to on to read the original README.md
-
 # Raspberry Pi Pico Web Server Control
 
-This repository contains code to control Raspberry Pi Pico, ESP8266, ESP32 or other MicroPython projects using a browser-based user interface. It allows you to interact with your Pico projects remotely from any device with a web browser, including smartphones, tablets, and computers.A
+This repository contains code to control Raspberry Pi Pico, ESP8266, ESP32 or other MicroPython projects using a browser-based user interface. It allows you to interact with your Pico projects remotely from any device with a web browser, including smartphones, tablets, and computers.
 
 The latest features include improved memory usage, support for additional microcontrollers like ESP8266, and convenient options such as blinking the IP address using the built-in LED and displaying a file list for the root directory.
 

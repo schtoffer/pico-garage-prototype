@@ -13,6 +13,7 @@ from machine import Pin
 import ujson as json
 
 led = Pin("LED", Pin.OUT)
+
 led_wlan_connected = Pin(13, Pin.OUT)
 led_wlan_disconnected = Pin(15, Pin.OUT)
 led_done = Pin(14, Pin.OUT)
