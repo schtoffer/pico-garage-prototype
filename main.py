@@ -13,7 +13,7 @@ from machine import Pin
 import ujson as json
 from hcsr04 import HCSR04
 
-led = Pin("LED", Pin.OUT)
+led = Pin("LED", Pin.OUT) # circuit board LED
 switch_restart = Pin(20, Pin.OUT)
 garage_signal = Pin(16, Pin.OUT)
 magnet = Pin(17, mode=Pin.IN, pull=Pin.PULL_DOWN)
@@ -150,11 +150,13 @@ async def main():
 
         if magnet.value() == 1:
             await asyncio.sleep(1)
-            switch_restart.on()
+            #switch_restart.on()
         
         if server.wlan.isconnected() == False:       
             await asyncio.sleep(1)
             switch_restart.on()
+        else:
+            led.on()
             #print(server.wlan.isconnected())
             
 server = GurgleAppsWebserver(config.WIFI_SSID, config.WIFI_PASSWORD, port=80, timeout=20, doc_root="/www", log_level=2)
