@@ -17,6 +17,8 @@ led_wlan_connected = Pin(13, Pin.OUT)
 led_wlan_disconnected = Pin(15, Pin.OUT)
 led_done = Pin(14, Pin.OUT)
 switch_restart = Pin(20, Pin.OUT)
+garage_signal = Pin(16, Pin.OUT)
+magnet = Pin(17, mode=Pin.IN, pull=Pin.PULL_DOWN)
 
 led.off()
 led_wlan_disconnected.off()
@@ -28,12 +30,6 @@ blink_on_time = 0.5
 
 status = True
 shutdown = False
-
-garage_signal = Pin(16, Pin.OUT)
-
-garage_door_closed = True
-
-magnet = Pin(17, mode=Pin.IN, pull=Pin.PULL_DOWN)
 
 async def example_func(request, response, param1, param2):
     print("example_func")
@@ -82,7 +78,6 @@ async def stop_server(request, response):
     shutdown = True
 
 async def control_garage_door(request, response, operation):
-    global garage_door_closed
     if operation == "close":
         if magnet.value() == 1:
             pass
@@ -90,7 +85,6 @@ async def control_garage_door(request, response, operation):
             garage_signal.on()
             await asyncio.sleep(1)
             garage_signal.off()
-            garage_door_closed = True
     elif operation == "open":
         if magnet.value() == 0:
             pass
@@ -98,7 +92,6 @@ async def control_garage_door(request, response, operation):
             garage_signal.on()
             await asyncio.sleep(1)
             garage_signal.off()
-            garage_door_closed = False
     await send_status(request, response)
 
 async def main():
@@ -120,7 +113,7 @@ async def main():
         else:
             led_wlan_connected.off()
             led_wlan_disconnected.on()
-            await asyncio.sleep(10)
+            await asyncio.sleep(1)
             switch_restart.on()
             #print(server.wlan.isconnected())
             
