@@ -11,26 +11,45 @@ import utime as time
 import uasyncio as asyncio
 from machine import Pin
 import ujson as json
+from hcsr04 import HCSR04
 
 led = Pin("LED", Pin.OUT)
-
-led_wlan_connected = Pin(13, Pin.OUT)
-led_wlan_disconnected = Pin(15, Pin.OUT)
-led_done = Pin(14, Pin.OUT)
 switch_restart = Pin(20, Pin.OUT)
 garage_signal = Pin(16, Pin.OUT)
 magnet = Pin(17, mode=Pin.IN, pull=Pin.PULL_DOWN)
+sensor = HCSR04(trigger_pin=19, echo_pin=18, echo_timeout_us=10000)
+
+led_r = Pin(15, Pin.OUT)
+led_y = Pin(14, Pin.OUT)
+led_g = Pin(13, Pin.OUT)
 
 led.off()
-led_wlan_disconnected.off()
-led_wlan_connected.off()
-led_done.off()
 
 blink_off_time = 0.5
 blink_on_time = 0.5
 
 status = True
 shutdown = False
+
+def red():
+    led_g.off()
+    led_y.off()
+    led_r.on()
+    
+def yellow():
+    led_g.off()
+    led_y.on()
+    led_r.off()
+
+def green():
+    led_g.on()
+    led_y.off()
+    led_r.off()
+    
+def leds_off():
+    led_g.off()
+    led_y.off()
+    led_r.off()
 
 async def example_func(request, response, param1, param2):
     print("example_func")
@@ -100,20 +119,40 @@ async def main():
     
     while not shutdown:
         await asyncio.sleep(0.2)
+        distance = sensor.distance_cm()
+        print(distance)
+        
+        if distance < 5:
+            while True:
+                distance = sensor.distance_cm()
+                red()
+                time.sleep(.1)
+                leds_off()
+                time.sleep(.1)
+                print(distance)
+                if distance > 5:
+                    break
+        elif distance > 0 and distance < 10:
+            red()
+            print(distance)
+        elif distance >= 10 and distance < 20:
+            yellow()
+            print(distance)
+        elif distance >= 20 and distance < 30:
+            green()
+            print(distance)
+        else:
+            print(distance)
+            leds_off()
+        await asyncio.sleep(.1)
+        
+        ###
 
         if magnet.value() == 1:
-            led_wlan_connected.off()
-            led_wlan_disconnected.on()
             await asyncio.sleep(1)
             switch_restart.on()
         
-        if server.wlan.isconnected() == True:
-            led_wlan_connected.on()
-            led_wlan_disconnected.off()
-            #print(server.wlan.isconnected())
-        else:
-            led_wlan_connected.off()
-            led_wlan_disconnected.on()
+        if server.wlan.isconnected() == False:       
             await asyncio.sleep(1)
             switch_restart.on()
             #print(server.wlan.isconnected())
