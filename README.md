@@ -1,5 +1,5 @@
 # Raspberry Pi Pico W Smart Garage
-
+Hei
 This repository contains code to turn a dumb garage into a smart one.
 
 The code is heavily based on Gurgleapps.com. Please continue to on to read the original README.md
