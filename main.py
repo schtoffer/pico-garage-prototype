@@ -145,6 +145,8 @@ async def main():
             else:
                 leds_off()
             await asyncio.sleep(.1)
+        else:
+            leds_off()
         
         if server.wlan.isconnected() == False:       
             await asyncio.sleep(1)
