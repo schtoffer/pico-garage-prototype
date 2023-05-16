@@ -122,35 +122,36 @@ async def main():
         distance = sensor.distance_cm()
         print(distance)
         
-        if distance < 20:
-            while True:
-                distance = sensor.distance_cm()
-                red()
-                time.sleep(.1)
-                leds_off()
-                time.sleep(.1)
-                print(distance)
-                if distance > 5:
-                    break
-        elif distance > 0 and distance < 30:
-            red()
-        elif distance >= 30 and distance < 80:
-            green()
-        else:
-            leds_off()
-        await asyncio.sleep(.1)
-        
         ###
 
-        if magnet.value() == 1:
-            await asyncio.sleep(1)
-            #switch_restart.on()
+        if magnet.value() == 0: ## Hvis porten er åpen kjør ultrasonic og led-stripe
+            step1 = 80
+            step2 = 60
+            step3 = 8
+            if distance < step3:
+                red()
+            elif distance >= step3 and distance < step2:
+                
+                while True:
+                    distance = sensor.distance_cm()
+                    yellow()
+                    time.sleep(distance/200)
+                    leds_off()
+                    time.sleep(distance/200)
+                    if distance > step3 or distance < step1:
+                        break
+            elif distance >= step2 and distance < step1:
+                green()
+            else:
+                leds_off()
+            await asyncio.sleep(.1)
         
         if server.wlan.isconnected() == False:       
             await asyncio.sleep(1)
             switch_restart.on()
         else:
             led.on()
+            
             #print(server.wlan.isconnected())
             
 server = GurgleAppsWebserver(config.WIFI_SSID, config.WIFI_PASSWORD, port=80, timeout=20, doc_root="/www", log_level=2)
